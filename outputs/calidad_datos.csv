@@ -1,0 +1,11 @@
+columna,tipo_dato,valores_nulos,porcentaje_nulos
+fecha_registro,datetime64[us],0,0.0
+planta,str,0,0.0
+caudal_entrada_m3_d,int64,0,0.0
+DBO_entrada_mg_L,int64,0,0.0
+SST_entrada_mg_L,int64,0,0.0
+pH_entrada,float64,0,0.0
+energia_aeracion_kWh,float64,0,0.0
+lodos_generados_kg_d,float64,0,0.0
+DBO_salida_mg_L,float64,0,0.0
+cumplimiento_norma,int64,0,0.0
