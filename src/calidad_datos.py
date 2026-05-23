@@ -1,15 +1,20 @@
-"""Revision de calidad de datos para Aqualimpia."""
-
 import pandas as pd
 
 
-def resumen_calidad(df: pd.DataFrame) -> pd.DataFrame:
-    """Genera un resumen de valores nulos y tipos de datos."""
-    return pd.DataFrame(
-        {
-            "columna": df.columns,
-            "tipo_dato": [df[col].dtype for col in df.columns],
-            "nulos": [df[col].isna().sum() for col in df.columns],
-            "porcentaje_nulos": [df[col].isna().mean() * 100 for col in df.columns],
-        }
-    )
+def evaluar_calidad_datos(df, output_path):
+    resumen_calidad = pd.DataFrame({
+        "columna": df.columns,
+        "tipo_dato": df.dtypes.astype(str).values,
+        "valores_nulos": df.isnull().sum().values,
+        "porcentaje_nulos": (df.isnull().mean() * 100).round(2).values
+    })
+
+    duplicados = df.duplicated().sum()
+
+    print("Resumen de calidad de datos:")
+    print(resumen_calidad)
+    print(f"\nCantidad de registros duplicados: {duplicados}")
+
+    resumen_calidad.to_csv(f"{output_path}/calidad_datos.csv", index=False)
+
+    return resumen_calidad

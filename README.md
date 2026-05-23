@@ -1,176 +1,281 @@
-# Proyecto de Análisis de Datos - AquaLimpia S. A.
+# Proyecto de Analisis de Datos - AquaLimpia S. A.
 
-## 1. Descripción del proyecto
+Este repositorio contiene un flujo modular de analisis de datos para evaluar el desempeno operativo y ambiental de plantas de tratamiento de aguas residuales de AquaLimpia S. A.
 
-Este proyecto tiene como objetivo analizar el desempeño de las plantas de tratamiento de aguas residuales de AquaLimpia S. A.
+El proyecto permite cargar datos desde Excel, revisar calidad de datos, calcular indicadores, detectar valores atipicos, generar archivos de salida para distintas areas y visualizar los resultados en un dashboard interactivo desarrollado con Streamlit.
 
-Durante el último trimestre se detectaron incumplimientos intermitentes en parámetros críticos, especialmente en la DBO de salida y en la eficiencia del tratamiento. Por eso, se desarrolló un análisis exploratorio que permite revisar el comportamiento de las plantas, detectar alertas operativas y apoyar la toma de decisiones de las áreas de Operaciones y Gestión Ambiental.
-
-## 2. Objetivos
+## Objetivos
 
 - Analizar el comportamiento operativo y ambiental de las plantas de tratamiento.
-- Calcular la eficiencia de remoción de DBO.
+- Calcular la eficiencia de remocion de DBO.
 - Identificar registros con incumplimiento normativo.
-- Detectar posibles valores atípicos en variables relevantes.
-- Generar archivos de salida para distintas áreas de la empresa.
-- Construir un dashboard exploratorio para visualizar los principales resultados.
+- Generar alertas operativas para registros que requieren revision.
+- Detectar posibles valores atipicos mediante z-score.
+- Exportar archivos separados para Operaciones, Gestion Ambiental y resumen ejecutivo.
+- Visualizar los indicadores principales en un dashboard interactivo.
 
-## 3. Estructura del proyecto
+## Estructura del proyecto
 
 ```text
 aqualimpia-analisis/
-│
-├── data/
-│   └── dataset_set_A_aguas_residuales.xlsx
-│
-├── notebooks/
-│   └── analisis_aqualimpia.ipynb
-│
-├── src/
-│   ├── procesamiento.py
-│   ├── calidad_datos.py
-│   ├── indicadores.py
-│   └── visualizaciones.py
-│
-├── dashboard/
-│   └── dashboard_aqualimpia.py
-│
-├── outputs/
-│   ├── operaciones_aqualimpia.csv
-│   ├── gestion_ambiental_aqualimpia.csv
-│   └── resumen_indicadores.csv
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+|
+|-- data/
+|   |-- dataset_set_A_aguas_residuales.xlsx
+|
+|-- dashboard/
+|   |-- dashboard_aqualimpia.py
+|
+|-- notebooks/
+|   |-- analisis_aqualimpia.ipynb
+|
+|-- outputs/
+|   |-- calidad_datos.csv
+|   |-- operaciones_aqualimpia.csv
+|   |-- gestion_ambiental_aqualimpia.csv
+|   |-- resumen_indicadores.csv
+|   |-- dataset_procesado.joblib
+|
+|-- src/
+|   |-- procesamiento.py
+|   |-- calidad_datos.py
+|   |-- indicadores.py
+|   |-- visualizaciones.py
+|   |-- procesar_datos.py
+|
+|-- main.py
+|-- requirements.txt
+|-- README.md
+|-- .gitignore
 ```
 
-## 4. Datos utilizados
+## Diseno modular
 
-El dataset utilizado corresponde al archivo:
+El proyecto esta separado en modulos para que el codigo sea mas facil de entender, mantener y reutilizar:
+
+- `main.py`: punto principal de ejecucion. Orquesta la carga, calidad de datos, indicadores, deteccion de anomalias y generacion de archivos.
+- `src/procesamiento.py`: contiene la funcion de carga del dataset y conversion de fechas.
+- `src/calidad_datos.py`: genera el resumen de calidad de datos, incluyendo tipos, nulos y duplicados.
+- `src/indicadores.py`: calcula eficiencia de remocion de DBO, estado de cumplimiento, alertas operativas y anomalias.
+- `src/visualizaciones.py`: contiene funciones auxiliares relacionadas con salidas del analisis.
+- `dashboard/dashboard_aqualimpia.py`: aplicacion Streamlit para explorar los resultados visualmente.
+- `notebooks/analisis_aqualimpia.ipynb`: notebook explicativo con el analisis paso a paso, graficos y conclusiones.
+
+## Datos utilizados
+
+El archivo de entrada esta en:
 
 ```text
-dataset_set_A_aguas_residuales.xlsx
+data/dataset_set_A_aguas_residuales.xlsx
 ```
 
-Este archivo contiene registros asociados a distintas plantas de tratamiento, incluyendo variables como:
+Incluye variables como:
 
-- Fecha de registro.
-- Planta de tratamiento.
-- Caudal de entrada.
-- DBO de entrada.
-- DBO de salida.
-- Energía utilizada en aireación.
-- Lodos generados.
-- Cumplimiento normativo.
+- `fecha_registro`
+- `planta`
+- `caudal_entrada_m3_d`
+- `DBO_entrada_mg_L`
+- `SST_entrada_mg_L`
+- `pH_entrada`
+- `energia_aeracion_kWh`
+- `lodos_generados_kg_d`
+- `DBO_salida_mg_L`
+- `cumplimiento_norma`
 
-## 5. Proceso de análisis
+## Requisitos
 
-El proceso se desarrolló en las siguientes etapas:
+Se recomienda usar Python 3.12 o una version compatible reciente.
 
-1. Carga del dataset original desde la carpeta `data`.
-2. Conversión de la columna `fecha_registro` a formato de fecha.
-3. Revisión de calidad de datos, considerando valores nulos, tipos de datos y duplicados.
-4. Cálculo de la eficiencia de remoción de DBO.
-5. Creación del estado de cumplimiento normativo.
-6. Generación de alertas operativas.
-7. Detección de valores atípicos mediante z-score.
-8. Generación de archivos de salida.
-9. Construcción del dashboard exploratorio.
+Las dependencias del proyecto estan en `requirements.txt`:
 
-## 6. Indicadores calculados
+```text
+pandas
+numpy
+scipy
+joblib
+openpyxl
+streamlit
+plotly
+```
 
-El principal indicador calculado fue la eficiencia de remoción de DBO:
+## Instalacion paso a paso
+
+Desde la carpeta del proyecto, crea y activa un entorno virtual:
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+Instala las dependencias:
+
+```powershell
+pip install -r requirements.txt
+```
+
+Si el entorno virtual tuvo instalaciones corruptas o errores de dependencias, se puede reinstalar encima con:
+
+```powershell
+pip install --ignore-installed -r requirements.txt
+```
+
+## Ejecucion del analisis
+
+Para ejecutar el flujo completo:
+
+```powershell
+python main.py
+```
+
+Este comando realiza las siguientes acciones:
+
+1. Carga el archivo Excel desde `data/`.
+2. Convierte `fecha_registro` a formato fecha.
+3. Evalua calidad de datos.
+4. Calcula la eficiencia de remocion de DBO.
+5. Clasifica el cumplimiento normativo.
+6. Genera alertas operativas.
+7. Detecta valores atipicos con z-score.
+8. Exporta archivos CSV en `outputs/`.
+9. Guarda `outputs/dataset_procesado.joblib`, usado por el dashboard.
+
+Al finalizar, la consola muestra un resumen por planta.
+
+## Archivos generados
+
+El flujo principal genera estos archivos:
+
+- `outputs/calidad_datos.csv`: resumen de tipos de datos, valores nulos y porcentaje de nulos.
+- `outputs/operaciones_aqualimpia.csv`: archivo orientado a Operaciones, con caudal, DBO, energia, lodos, eficiencia y alerta operativa.
+- `outputs/gestion_ambiental_aqualimpia.csv`: archivo orientado a Gestion Ambiental, con DBO de salida, cumplimiento y estado de cumplimiento.
+- `outputs/resumen_indicadores.csv`: resumen por planta con indicadores promedio y tasa de cumplimiento.
+- `outputs/dataset_procesado.joblib`: dataset procesado para uso interno del dashboard.
+
+Nota: el archivo `.joblib` se genera localmente y esta ignorado por Git mediante `.gitignore`.
+
+## Visualizacion con Streamlit
+
+Antes de abrir el dashboard, ejecuta al menos una vez:
+
+```powershell
+python main.py
+```
+
+Esto asegura que exista `outputs/dataset_procesado.joblib`, que es el archivo que lee Streamlit.
+
+Luego ejecuta:
+
+```powershell
+streamlit run dashboard/dashboard_aqualimpia.py
+```
+
+Streamlit mostrara una URL local similar a:
+
+```text
+Local URL: http://localhost:8501
+```
+
+Abre esa direccion en el navegador para visualizar el dashboard.
+
+El dashboard permite:
+
+- Filtrar por planta.
+- Filtrar por rango de fechas.
+- Ver total de registros analizados.
+- Ver porcentaje de cumplimiento normativo.
+- Ver DBO de salida promedio.
+- Ver eficiencia promedio de remocion de DBO.
+- Revisar la evolucion temporal de DBO de salida.
+- Comparar cumplimiento por planta.
+- Analizar relacion entre caudal de entrada y DBO de salida.
+- Revisar energia de aireacion versus eficiencia.
+- Consultar registros con alerta operativa.
+
+## Notebook de analisis
+
+El notebook esta en:
+
+```text
+notebooks/analisis_aqualimpia.ipynb
+```
+
+Contiene el analisis exploratorio documentado paso a paso:
+
+- Carga de datos.
+- Revision de calidad.
+- Exploracion inicial.
+- Construccion de indicadores.
+- Resumen por planta.
+- Graficos con Plotly.
+- Deteccion de anomalias.
+- Generacion de archivos de salida.
+- Conclusiones del analisis.
+
+Para abrirlo, usa Jupyter Notebook, JupyterLab o VS Code con soporte para notebooks.
+
+Si necesitas instalar Jupyter en el entorno virtual:
+
+```powershell
+pip install jupyter
+```
+
+## Indicadores calculados
+
+### Eficiencia de remocion de DBO
 
 ```text
 Eficiencia DBO (%) = ((DBO entrada - DBO salida) / DBO entrada) * 100
 ```
 
-También se generaron dos variables de apoyo:
+### Estado de cumplimiento
+
+Convierte `cumplimiento_norma` en una etiqueta legible:
 
 ```text
-estado_cumplimiento
+1 -> Cumple
+0 -> No cumple
 ```
 
-Indica si el registro cumple o no cumple la normativa.
+### Alerta operativa
 
-```text
-alerta_operativa
-```
+Un registro queda marcado como `Alerta` si:
 
-Indica si el registro requiere atención, ya sea por incumplimiento normativo o por baja eficiencia del tratamiento.
+- No cumple la normativa, o
+- Tiene eficiencia de remocion de DBO menor a 70%.
 
-## 7. Archivos generados
+### Valores atipicos
 
-El proyecto genera los siguientes archivos en la carpeta `outputs`:
+Se aplica z-score sobre variables numericas relevantes. Si el valor absoluto del z-score es mayor que 3, se marca como anomalia.
 
-```text
-operaciones_aqualimpia.csv
-```
+## Resultados principales del analisis
 
-Archivo orientado al área de Operaciones. Incluye fecha, planta, caudal de entrada, DBO de entrada, DBO de salida, energía de aireación, lodos generados, eficiencia de remoción y alerta operativa.
+Con el dataset actual se observaron estos resultados:
 
-```text
-gestion_ambiental_aqualimpia.csv
-```
+- 200 registros analizados.
+- Periodo observado: 2025-07-01 a 2025-10-28.
+- Tasa global de cumplimiento normativo: 22.50%.
+- Eficiencia promedio de remocion de DBO: 87.09%.
+- DBO de salida promedio: 36.18 mg/L.
+- Registros con alerta operativa: 155.
+- Planta Norte presenta la menor tasa de cumplimiento.
+- Las anomalias detectadas se concentran principalmente en `lodos_generados_kg_d` y `DBO_salida_mg_L`.
 
-Archivo orientado al área de Gestión Ambiental. Incluye fecha, planta, DBO de salida, cumplimiento normativo y estado de cumplimiento.
+## Flujo recomendado de trabajo
 
-```text
-resumen_indicadores.csv
-```
+Cada vez que cambie el archivo de datos o se modifique la logica de indicadores:
 
-Archivo resumen por planta, útil para comparar desempeño general entre plantas.
-
-## 8. Dashboard exploratorio
-
-El dashboard permite visualizar el comportamiento de las plantas mediante gráficos y métricas principales.
-
-Incluye:
-
-- Total de registros analizados.
-- Porcentaje de cumplimiento normativo.
-- DBO de salida promedio.
-- Eficiencia promedio de remoción de DBO.
-- Evolución de la DBO de salida.
-- Comparación de cumplimiento por planta.
-- Relación entre caudal de entrada y DBO de salida.
-- Registros con alerta operativa.
-
-## 9. Instalación de librerías
-
-Para instalar las dependencias del proyecto se debe ejecutar:
-
-```bash
-pip install -r requirements.txt
-```
-
-## 10. Ejecución del análisis
-
-Para procesar los datos se debe ejecutar:
-
-```bash
-python src/procesar_datos.py
-```
-
-Este comando genera los archivos de salida dentro de la carpeta `outputs`.
-
-## 11. Ejecución del dashboard
-
-Para abrir el dashboard se debe ejecutar:
-
-```bash
+```powershell
+python main.py
 streamlit run dashboard/dashboard_aqualimpia.py
 ```
 
-Luego se abrirá una ventana en el navegador con la visualización del proyecto.
+Si se desea revisar o documentar el analisis con mas detalle, abrir y ejecutar:
 
-## 12. Resultados esperados
+```text
+notebooks/analisis_aqualimpia.ipynb
+```
 
-Con este proyecto se espera obtener una visión más clara del desempeño de las plantas de tratamiento. Los resultados permiten identificar plantas con menor eficiencia, registros con incumplimiento normativo y posibles situaciones operativas que requieren revisión.
+## Conclusiones
 
-El análisis también facilita la generación de evidencia para apoyar decisiones internas y reportes ambientales.
+El proyecto entrega una base reproducible para analizar el desempeno de AquaLimpia S. A. La separacion modular permite mantener el procesamiento, la calidad de datos, los indicadores y la visualizacion en componentes independientes.
 
-## 13. Conclusión
-
-La documentación técnica permite que el proyecto sea más fácil de entender, ejecutar y mantener. En el caso de AquaLimpia S. A., esto es especialmente importante porque los resultados pueden ser usados por distintas áreas de la empresa y deben ser claros, trazables y reproducibles.
+Esto facilita extender el analisis, actualizar el dashboard, reutilizar funciones en notebooks y generar reportes consistentes para Operaciones y Gestion Ambiental.

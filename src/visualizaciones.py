@@ -1,9 +1,5 @@
-"""Funciones de visualizacion para Aqualimpia."""
-
-import pandas as pd
-import plotly.express as px
+import joblib
 
 
-def grafico_distribucion(df: pd.DataFrame, columna: str):
-    """Crea un histograma para una columna numerica."""
-    return px.histogram(df, x=columna, title=f"Distribucion de {columna}")
+def guardar_dataset_procesado(df, output_path):
+    joblib.dump(df, f"{output_path}/dataset_procesado.joblib")
